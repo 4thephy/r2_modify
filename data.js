@@ -36,7 +36,13 @@ const figuresData = [
       "기원전 2333년에 우리나라 최초의 국가인 '고조선'을 세우고 아사달에 도읍을 정했어요.",
       "널리 사람을 돕고 배려하자는 인도주의적 '홍익인간' 사상을 가르쳐 주셨어요.",
       "매년 10월 3일 '개천절'은 바로 단군왕검 할아버지가 나라를 세운 날을 기념하는 날이에요."
-    ]
+    ],
+    images: {
+      portrait: "images/dangun_myth.png",
+      gallery: [
+        { src: "images/dangun_myth.png", caption: "단군신화 일러스트 - 신단수 아래의 단군왕검과 곰, 호랑이" }
+      ]
+    }
   },
   {
     id: "parkhyeokgeose",
@@ -251,7 +257,13 @@ const figuresData = [
       "세계에서 가장 오래된 천문 관측대 중 하나인 '첨성대'를 건설하여 농업을 장려했어요.",
       "백성들의 평화를 바라는 마음을 담아 거대한 규모의 '황룡사 9층 목탑'을 창건했어요.",
       "김춘추와 김유신 같은 젊고 패기 있는 신인 유학자들을 등용해 훗날 삼국 통일의 뼈대를 놓았어요."
-    ]
+    ],
+    images: {
+      portrait: "images/seondeok_queen.png",
+      gallery: [
+        { src: "images/seondeok_queen.png", caption: "선덕여왕 일러스트 - 황룡사 9층 목탑 앞의 여왕" }
+      ]
+    }
   },
   {
     id: "wonhyo",
@@ -557,7 +569,13 @@ const figuresData = [
       "자연 들풀과 곤충을 진짜처럼 묘사해 낸 한국 고유의 수묵 예술 '초충도' 화풍을 일구었어요.",
       "성품과 품격이 훌륭하여 아들 율곡 이이를 양성하고 조선 최고의 지혜로운 어머니상이 되었어요.",
       "차별받던 조선의 사회적 한계를 넘어 뛰어난 예술 문학 활동을 이룩해 내었어요."
-    ]
+    ],
+    images: {
+      portrait: "images/saimdang_chochungdo.png",
+      gallery: [
+        { src: "images/saimdang_chochungdo.png", caption: "신사임당의 대표 초충도 화풍 - 수박과 나비 일러스트" }
+      ]
+    }
   },
   {
     id: "yihwang",
@@ -663,7 +681,17 @@ const figuresData = [
       "임진왜란에서 거북선과 판옥선을 지휘해 세계 역사에 남을 해상 23전 23승 무패 신화를 이룩했어요.",
       "한산도 앞바다에서 적을 가두는 '학익진' 전법으로 적의 대선단을 쓸어버렸어요. (한산도 대첩)",
       "단 13척의 판옥선으로 10배가 넘는 적함을 무찌르는 기적의 해전을 기록했어요. (명량 해전)"
-    ]
+    ],
+    images: {
+      portrait: "images/yisunsin_portrait.png",
+      gallery: [
+        { src: "images/yisunsin_portrait.png", caption: "충무공 이순신 장군 영정 초상화" },
+        { src: "images/yisunsin_sword.png", caption: "충무공의 역사적인 유물 - 이순신 장도(긴 칼)" },
+        { src: "images/turtle_ship_battle.png", caption: "임진왜란 한산도 해전 거북선 돌격 전투 일러스트" },
+        { src: "images/hakekjin_formation.png", caption: "수군 전술도 - 적선을 포위 섬멸하는 학익진 전술" },
+        { src: "images/imjin_cannon.png", caption: "임진왜란 당시 조선 수군이 사용한 청동 화포(총통)" }
+      ]
+    }
   },
   {
     id: "parkmunsu",
@@ -946,7 +974,13 @@ const figuresData = [
       "1909년 10월 26일 하얼빈역에서 이토 히로부미를 정확히 저격하여 처단하고 한국의 독립 의지를 전 세계에 울렸어요.",
       "재판 과정에서 자신이 개인 암살자가 아닌 '대한의군 중장'으로서 전쟁을 치른 것임을 당당히 역설했어요.",
       "모진 핍박 속에서도 동양 삼국이 평화롭게 살자는 진보적 철학인 《동양평화론》을 완성하려 힘썼어요."
-    ]
+    ],
+    images: {
+      portrait: "images/anjunggeun_handprint.png",
+      gallery: [
+        { src: "images/anjunggeun_handprint.png", caption: "안중근 의사 단지동맹 수인 혈서 손도장과 동양평화론 서체" }
+      ]
+    }
   },
   {
     id: "bangjeonghwan",
