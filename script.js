@@ -189,10 +189,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const detailAchievementsContainer = document.getElementById('detailAchievementsContainer');
   const detailGalleryShowcase = document.getElementById('detailGalleryShowcase');
   const detailGalleryGrid = document.getElementById('detailGalleryGrid');
+  const detailAnecdoteContainer = document.getElementById('detailAnecdoteContainer');
+  const detailWorksGrid = document.getElementById('detailWorksGrid');
+  const detailTabBtns = document.querySelectorAll('.detail-tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
   
   // Pagination
   const prevFigureBtn = document.getElementById('prevFigureBtn');
   const nextFigureBtn = document.getElementById('nextFigureBtn');
+
+  // Sub-Tab Switcher Logic
+  function initDetailTabs() {
+    detailTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.getAttribute('data-tab');
+        switchDetailTab(tabId);
+      });
+    });
+  }
+
+  function switchDetailTab(tabId) {
+    // Update active class on tab buttons
+    detailTabBtns.forEach(btn => {
+      if (btn.getAttribute('data-tab') === tabId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update active class on panels
+    tabPanels.forEach(panel => {
+      if (panel.id === `panel-${tabId}`) {
+        panel.classList.remove('hidden');
+        panel.classList.add('active');
+      } else {
+        panel.classList.add('hidden');
+        panel.classList.remove('active');
+      }
+    });
+  }
+
+  initDetailTabs();
 
   // Group figures by Era
   const eras = [
@@ -300,6 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smooth scroll to top of content
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    // Reset active sub-tab back to 'story'
+    switchDetailTab('story');
+
     // Set header meta
     detailEraName.textContent = figure.era;
     detailName.textContent = figure.name;
@@ -314,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Story paragraphs
     detailStoryContainer.innerHTML = '';
     // Format bold text or simple markdown inside paragraph
-    const formattedStory = figure.story.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    const formattedStory = figure.detailedStory.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     const p = document.createElement('p');
     p.className = 'lead-text font-serif';
     p.innerHTML = formattedStory;
@@ -377,9 +418,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     detailAchievementsContainer.appendChild(achUl);
 
+    // Anecdote card box
+    const anecdoteTabBtn = document.querySelector('.detail-tab-btn[data-tab="anecdote"]');
+    if (figure.anecdote) {
+      anecdoteTabBtn.style.display = 'inline-block';
+      detailAnecdoteContainer.innerHTML = `
+        <div class="anecdote-header font-serif">💡 ${figure.anecdote.title}</div>
+        <div class="anecdote-body font-serif">${figure.anecdote.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+        <div class="anecdote-source">출처: ${figure.anecdote.source}</div>
+      `;
+    } else {
+      anecdoteTabBtn.style.display = 'none';
+    }
+
+    // Works list
+    const worksTabBtn = document.querySelector('.detail-tab-btn[data-tab="works"]');
+    if (figure.works && figure.works.length > 0) {
+      worksTabBtn.style.display = 'inline-block';
+      detailWorksGrid.innerHTML = '';
+      figure.works.forEach(work => {
+        const card = document.createElement('div');
+        card.className = 'work-card';
+        card.innerHTML = `
+          <h4 class="work-card-title">${work.title}</h4>
+          <p class="work-card-desc">${work.desc}</p>
+        `;
+        detailWorksGrid.appendChild(card);
+      });
+    } else {
+      worksTabBtn.style.display = 'none';
+    }
+
     // Gallery (If available)
+    const galleryTabBtn = document.querySelector('.detail-tab-btn[data-tab="gallery"]');
     if (figure.images && figure.images.gallery) {
-      detailGalleryShowcase.classList.remove('hidden');
+      galleryTabBtn.style.display = 'inline-block';
       detailGalleryGrid.innerHTML = '';
       
       figure.images.gallery.forEach(img => {
@@ -392,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detailGalleryGrid.appendChild(item);
       });
     } else {
-      detailGalleryShowcase.classList.add('hidden');
+      galleryTabBtn.style.display = 'none';
     }
   }
 

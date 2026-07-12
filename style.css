@@ -1600,3 +1600,147 @@ a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================
+   Biography Sub-Tabs & Content Sections
+   ========================================== */
+.detail-tabs-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-muted);
+  margin-bottom: 2.5rem;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.detail-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.detail-tab-btn:hover {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.04);
+}
+
+.detail-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+/* Tab Panels */
+.tab-panel {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Anecdote Card Box */
+.anecdote-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 3rem;
+  position: relative;
+  box-shadow: var(--shadow);
+  margin: 1.5rem 0;
+}
+
+.anecdote-container::before {
+  content: '“';
+  position: absolute;
+  top: 10px;
+  left: 25px;
+  font-family: var(--font-serif);
+  font-size: 8rem;
+  color: rgba(var(--accent-rgb), 0.08);
+  line-height: 1;
+}
+
+.anecdote-header {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.anecdote-body {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.anecdote-source {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: right;
+  border-top: 1px solid var(--border-muted);
+  padding-top: 1rem;
+}
+
+/* Works Grid */
+.works-showcase {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-muted);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+
+.works-title {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.work-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.work-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.work-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.work-card-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

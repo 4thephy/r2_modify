@@ -168,32 +168,67 @@
             <span>태어난 날짜: 1397년 ~ 1450년</span>
           </div>
         </div>
+        <!-- Figure Detail Sub-Tabs -->
+        <div class="detail-tabs-bar">
+          <button class="detail-tab-btn active" data-tab="story">📖 인물 이야기</button>
+          <button class="detail-tab-btn" data-tab="achievements">👑 주요 업적</button>
+          <button class="detail-tab-btn" data-tab="anecdote">💡 일화 & 어록</button>
+          <button class="detail-tab-btn" data-tab="works">🎨 남긴 작품</button>
+          <button class="detail-tab-btn" data-tab="gallery">🖼️ 역사 사진관</button>
+        </div>
 
-        <div class="article-layout">
-          <!-- Text Body -->
-          <div class="article-body" id="detailStoryContainer">
-            <!-- Dynamically populated story paragraphs go here -->
+        <div class="detail-tab-panels">
+          
+          <!-- Panel 1: Story & Infobox -->
+          <div class="tab-panel active" id="panel-story">
+            <div class="article-layout">
+              <!-- Text Body -->
+              <div class="article-body" id="detailStoryContainer">
+                <!-- Dynamically populated story paragraphs go here -->
+              </div>
+
+              <!-- Glassmorphic Infobox -->
+              <aside class="infobox" id="detailInfobox">
+                <!-- Dynamically populated infobox goes here -->
+              </aside>
+            </div>
+          </div>
+          
+          <!-- Panel 2: Achievements -->
+          <div class="tab-panel hidden" id="panel-achievements">
+            <div class="achievements-card-container" id="detailAchievementsContainer">
+              <!-- Dynamically populated achievements list goes here -->
+            </div>
+          </div>
+          
+          <!-- Panel 3: Anecdote -->
+          <div class="tab-panel hidden" id="panel-anecdote">
+            <div class="anecdote-container" id="detailAnecdoteContainer">
+              <!-- Dynamically populated anecdote box goes here -->
+            </div>
+          </div>
+          
+          <!-- Panel 4: Works -->
+          <div class="tab-panel hidden" id="panel-works">
+            <div class="works-showcase">
+              <h3 class="works-title font-serif">역사 속 남긴 발자취 (작품/공헌)</h3>
+              <div class="works-grid" id="detailWorksGrid">
+                <!-- Dynamically populated works go here -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Panel 5: Gallery -->
+          <div class="tab-panel hidden" id="panel-gallery">
+            <div class="gallery-showcase" id="detailGalleryShowcase">
+              <h3 class="gallery-title font-serif">역사 사진관</h3>
+              <div class="gallery-grid" id="detailGalleryGrid">
+                <!-- Gallery images go here -->
+              </div>
+            </div>
           </div>
 
-          <!-- Glassmorphic Infobox -->
-          <aside class="infobox" id="detailInfobox">
-            <!-- Dynamically populated infobox goes here -->
-          </aside>
         </div>
-
-        <!-- Dynamic Achievements Area -->
-        <div class="achievements-card-container" id="detailAchievementsContainer">
-          <!-- Dynamically populated achievements list goes here -->
-        </div>
-
-        <!-- Interactive Gallery Showcase (Conditional) -->
-        <div class="gallery-showcase hidden" id="detailGalleryShowcase">
-          <h3 class="gallery-title font-serif">역사 사진관</h3>
-          <div class="gallery-grid" id="detailGalleryGrid">
-            <!-- Gallery images go here -->
-          </div>
-        </div>
-
         <!-- Bottom Pagination Buttons -->
         <div class="detail-pagination">
           <button class="pag-btn" id="prevFigureBtn">
