@@ -645,6 +645,211 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================
+  // 4. 도전! 역사 골든벨 게임 엔진 (Golden Bell Game Engine)
+  // ==========================================
+  const playGoldenBellBtn = document.getElementById('playGoldenBellBtn');
+  const goldenBellGameView = document.getElementById('goldenBellGameView');
+  const gbBackToHomeBtn = document.getElementById('gbBackToHomeBtn');
+  const gbStartScreen = document.getElementById('gbStartScreen');
+  const gbStartGameInnerBtn = document.getElementById('gbStartGameInnerBtn');
+  const gbPlayScreen = document.getElementById('gbPlayScreen');
+  const gbRoundIndicator = document.getElementById('gbRoundIndicator');
+  const gbHeartsContainer = document.getElementById('gbHeartsContainer');
+  const gbTimerBar = document.getElementById('gbTimerBar');
+  const gbTimerText = document.getElementById('gbTimerText');
+  const gbQuestionHint = document.getElementById('gbQuestionHint');
+  const gbOptionsGrid = document.getElementById('gbOptionsGrid');
+  const gbFeedbackOverlay = document.getElementById('gbFeedbackOverlay');
+  const gbFeedbackText = document.getElementById('gbFeedbackText');
+  const gbResultScreen = document.getElementById('gbResultScreen');
+  const gbResultIcon = document.getElementById('gbResultIcon');
+  const gbResultTitle = document.getElementById('gbResultTitle');
+  const gbResultDesc = document.getElementById('gbResultDesc');
+  const gbRewardBox = document.getElementById('gbRewardBox');
+  const gbRetryBtn = document.getElementById('gbRetryBtn');
+  const gbResultHomeBtn = document.getElementById('gbResultHomeBtn');
+
+  // Game state
+  let gbRound = 1;
+  let gbLives = 3;
+  let gbTimeLeft = 15;
+  let gbTimerInterval = null;
+  let gbCurrentTarget = null;
+  let gbQuizPool = [];
+
+  function showGoldenBellPortal() {
+    // Hide other views
+    dashboardHome.classList.add('hidden');
+    figureDetailView.classList.add('hidden');
+    goldenBellGameView.classList.remove('hidden');
+
+    // Deselect sidebar links
+    const links = document.querySelectorAll('.toc-link');
+    links.forEach(l => l.classList.remove('active'));
+    currentFigureId = null;
+
+    // Reset to start screen
+    gbStartScreen.classList.remove('hidden');
+    gbPlayScreen.classList.add('hidden');
+    gbResultScreen.classList.add('hidden');
+    gbFeedbackOverlay.classList.add('hidden');
+
+    if (gbTimerInterval) clearInterval(gbTimerInterval);
+  }
+
+  function startGoldenBellGame() {
+    gbRound = 1;
+    gbLives = 3;
+    gbQuizPool = [...figuresData];
+
+    gbStartScreen.classList.add('hidden');
+    gbResultScreen.classList.add('hidden');
+    gbPlayScreen.classList.remove('hidden');
+
+    loadGbQuestion();
+  }
+
+  function loadGbQuestion() {
+    if (gbLives <= 0) {
+      endGbGame(false);
+      return;
+    }
+    if (gbRound > 5) {
+      endGbGame(true);
+      return;
+    }
+
+    // Update Round & Lives UI
+    gbRoundIndicator.textContent = `ROUND ${gbRound} / 5`;
+    gbHeartsContainer.innerHTML = '💖'.repeat(gbLives) + '🖤'.repeat(3 - gbLives);
+
+    // Pick target figure randomly
+    const randomIndex = Math.floor(Math.random() * gbQuizPool.length);
+    gbCurrentTarget = gbQuizPool.splice(randomIndex, 1)[0];
+
+    // Pick a hint (one-liner or achievements)
+    const hints = [gbCurrentTarget.oneLiner, ...gbCurrentTarget.achievements];
+    const chosenHint = hints[Math.floor(Math.random() * hints.length)];
+    gbQuestionHint.textContent = `"${chosenHint}"`;
+
+    // Generate 4 options (1 correct, 3 distractors)
+    const options = [gbCurrentTarget.name];
+    while (options.length < 4) {
+      const distractor = figuresData[Math.floor(Math.random() * figuresData.length)].name;
+      if (!options.includes(distractor)) {
+        options.push(distractor);
+      }
+    }
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+
+    // Render buttons
+    gbOptionsGrid.innerHTML = '';
+    options.forEach((opt, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'gb-option-btn';
+      btn.innerHTML = `<span class="gb-option-num">${index + 1}</span> ${opt}`;
+      btn.addEventListener('click', () => handleGbAnswer(opt));
+      gbOptionsGrid.appendChild(btn);
+    });
+
+    startGbTimer();
+  }
+
+  function startGbTimer() {
+    if (gbTimerInterval) clearInterval(gbTimerInterval);
+    gbTimeLeft = 15;
+    gbTimerText.textContent = `남은 시간: ${gbTimeLeft}초`;
+    
+    // Reset bar styles
+    gbTimerBar.style.width = '100%';
+    gbTimerBar.style.backgroundColor = '#10b981';
+
+    gbTimerInterval = setInterval(() => {
+      gbTimeLeft--;
+      gbTimerText.textContent = `남은 시간: ${gbTimeLeft}초`;
+      
+      const percent = (gbTimeLeft / 15) * 100;
+      gbTimerBar.style.width = `${percent}%`;
+
+      if (gbTimeLeft <= 5) {
+        gbTimerBar.style.backgroundColor = '#ef4444'; // Red alert
+      }
+
+      if (gbTimeLeft <= 0) {
+        clearInterval(gbTimerInterval);
+        gbLives--;
+        showGbFeedback(false, true); // Timeout
+      }
+    }, 1000);
+  }
+
+  function handleGbAnswer(selectedOpt) {
+    if (gbTimerInterval) clearInterval(gbTimerInterval);
+
+    // Disable all options immediately to prevent double clicking
+    const btns = gbOptionsGrid.querySelectorAll('.gb-option-btn');
+    btns.forEach(btn => btn.disabled = true);
+
+    const isCorrect = (selectedOpt === gbCurrentTarget.name);
+    if (!isCorrect) {
+      gbLives--;
+    }
+    showGbFeedback(isCorrect, false);
+  }
+
+  function showGbFeedback(isCorrect, isTimeout) {
+    gbFeedbackOverlay.classList.remove('hidden');
+    
+    if (isCorrect) {
+      gbFeedbackText.innerHTML = `정답입니다! 🎉<br><small style="font-size: 1.1rem; font-weight: normal; color: #c2f0c2;">훌륭해요! 다음 문제로 넘어갑니다.</small>`;
+    } else {
+      const subMsg = isTimeout ? '시간 초과!' : '오답입니다!';
+      gbFeedbackText.innerHTML = `${subMsg} 😢<br><small style="font-size: 1.1rem; font-weight: normal; color: #ffcccc;">정답은 '${gbCurrentTarget.name}'입니다.</small>`;
+    }
+
+    setTimeout(() => {
+      gbFeedbackOverlay.classList.add('hidden');
+      
+      if (gbLives <= 0) {
+        endGbGame(false);
+      } else {
+        if (isCorrect) {
+          gbRound++;
+        }
+        loadGbQuestion();
+      }
+    }, 2000);
+  }
+
+  function endGbGame(isVictory) {
+    if (gbTimerInterval) clearInterval(gbTimerInterval);
+
+    gbPlayScreen.classList.add('hidden');
+    gbResultScreen.classList.remove('hidden');
+
+    if (isVictory) {
+      gbResultIcon.textContent = '🏆';
+      gbResultTitle.textContent = '골든벨을 울렸습니다! 🔔';
+      gbResultDesc.textContent = '축하합니다! 5문제를 모두 맞히며 찬란한 역사 골든벨의 마스터가 되었습니다!';
+      gbRewardBox.classList.remove('hidden');
+    } else {
+      gbResultIcon.textContent = '😢';
+      gbResultTitle.textContent = '아쉽게 탈락했습니다!';
+      gbResultDesc.textContent = '하트를 모두 잃었습니다. 위인전기 탭을 조금 더 탐독한 후에 다시 도전해 보세요!';
+      gbRewardBox.classList.add('hidden');
+    }
+  }
+
+  // Bind clicks
+  playGoldenBellBtn.addEventListener('click', showGoldenBellPortal);
+  gbBackToHomeBtn.addEventListener('click', showHomeDashboard);
+  gbStartGameInnerBtn.addEventListener('click', startGoldenBellGame);
+  gbRetryBtn.addEventListener('click', startGoldenBellGame);
+  gbResultHomeBtn.addEventListener('click', showHomeDashboard);
+
+
+  // ==========================================
   // 5. Initial Startup Routing
   // ==========================================
   renderSidebar();
