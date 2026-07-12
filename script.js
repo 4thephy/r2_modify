@@ -254,7 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (link.getAttribute('data-id') === id) {
         link.classList.add('active');
         // Scroll sidebar to this link if necessary
-        link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        try {
+          link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) {
+          link.scrollIntoView();
+        }
       } else {
         link.classList.remove('active');
       }
@@ -527,6 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
   searchBtn.addEventListener('click', triggerSearch);
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       triggerSearch();
     }
   });
