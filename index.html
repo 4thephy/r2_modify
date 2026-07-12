@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쉽게 배우는 세종대왕 이야기 - SejongWiki</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span class="logo-text">Sejong<span>Wiki</span></span>
+      </div>
+    </div>
+    
+    <div class="header-center">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="궁금한 내용을 입력해 보세요..." autocomplete="off">
+        <button id="searchClearBtn" class="hidden">&times;</button>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="theme-controller">
+        <button id="themeMenuBtn" aria-label="테마 설정">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        
+        <div class="theme-menu hidden" id="themeMenu">
+          <div class="theme-menu-title">테마 설정 모드</div>
+          <div class="theme-options">
+            <label class="theme-option">
+              <input type="radio" name="theme-mode" value="manual" checked>
+              <span>수동 토글 (다크/라이트)</span>
+            </label>
+            <label class="theme-option">
+              <input type="radio" name="theme-mode" value="weather">
+              <span>실시간 날씨 연동 (맑음=다크/흐림=라이트)</span>
+            </label>
+            <label class="theme-option">
+              <input type="radio" name="theme-mode" value="season">
+              <span>계절 연동 (봄/여름/가을/겨울)</span>
+            </label>
+          </div>
+          
+          <div class="theme-status" id="themeStatus">
+            현재 테마: 다크 모드
+          </div>
+          
+          <div class="theme-manual-toggle" id="themeManualToggleContainer">
+            <button id="themeToggleBtnInner" class="action-btn-secondary">테마 전환</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    
+    <!-- Sidebar Table of Contents -->
+    <aside class="sidebar">
+      <div class="sidebar-sticky">
+        <div class="toc-title">목차</div>
+        <nav class="toc-nav">
+          <ul class="toc-list">
+            <li><a href="#intro" class="toc-link active">처음 위치</a></li>
+            <li>
+              <a href="#life" class="toc-link">1. 생애 (살아온 길)</a>
+              <ul class="toc-sublist">
+                <li><a href="#life-prince" class="toc-link">1.1 책을 사랑한 왕자</a></li>
+                <li><a href="#life-accession" class="toc-link">1.2 조선의 왕이 되다</a></li>
+                <li><a href="#life-death" class="toc-link">1.3 아름다운 안식처</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#achievements" class="toc-link">2. 세종대왕의 업적</a>
+              <ul class="toc-sublist">
+                <li><a href="#ach-hangul" class="toc-link">2.1 한글(훈민정음) 창제</a></li>
+                <li><a href="#ach-science" class="toc-link">2.2 과학 기술의 발전</a></li>
+                <li><a href="#ach-territory" class="toc-link">2.3 영토 개척 (4군 6진)</a></li>
+                <li><a href="#ach-culture" class="toc-link">2.4 음악과 문화 정비</a></li>
+              </ul>
+            </li>
+            <li><a href="#family" class="toc-link">3. 가족 관계도</a></li>
+            <li><a href="#legacy" class="toc-link">4. 따뜻한 애민 사상</a></li>
+            <li><a href="#references" class="toc-link">5. 도움받은 자료들</a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Article Header -->
+      <section id="intro" class="article-section">
+        <div class="article-title-container">
+          <h1 class="article-title">세종대왕</h1>
+          <div class="article-subtitle">조선 제4대 국왕, 우리 역사에서 가장 훌륭하고 따뜻했던 임금님</div>
+          <div class="article-meta">
+            <span>읽는 시간: 약 5분</span>
+            <span>어린이를 위한 쉬운 설명판</span>
+          </div>
+        </div>
+
+        <div class="article-layout">
+          <!-- Text Body -->
+          <div class="article-body">
+            <p class="lead-text font-serif">
+              <strong>세종대왕</strong>(1397년 ~ 1450년) 할아버지는 조선의 4번째 왕이에요. 본래 이름은 <strong>이도</strong>이고, 백성을 진심으로 사랑하여 많은 훌륭한 일을 해냈기 때문에 대왕(가장 훌륭한 왕)이라는 높임말을 붙여 부른답니다.
+            </p>
+            <p>
+              태종 임금님과 원경왕후 어머니의 셋째 아들로 태어났어요. 형들을 제치고 왕위에 오른 후, 백성들이 더 편리하고 행복하게 살 수 있도록 나라의 학문, 과학, 군사, 문화를 눈부시게 발전시켰어요.
+            </p>
+            <p>
+              글을 몰라 억울한 일을 당하는 백성들을 불쌍하게 여겨 세계에서 가장 쓰기 편한 글자인 <strong>한글(훈민정음)</strong>을 직접 만들었어요. 또, 노비 신분이었던 훌륭한 발명가 장영실을 등용하여 스스로 시간을 알려주는 물시계(자격루), 해시계(앙부일구), 비의 양을 재는 그릇(측우기) 등을 개발하도록 지원해 주었답니다.
+            </p>
+
+            <div class="quick-stats">
+              <div class="stat-card">
+                <div class="stat-num">31<span>년</span></div>
+                <div class="stat-label">조선을 다스린 시간</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-num">28<span>자</span></div>
+                <div class="stat-label">처음 만든 한글의 글자 수</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-num">1등</div>
+                <div class="stat-label">백성을 사랑하는 따뜻한 마음</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wikipedia style Infobox (Glassmorphic) -->
+          <aside class="infobox">
+            <div class="infobox-header">
+              <div class="infobox-title">세종대왕 (世宗)</div>
+              <div class="infobox-subtitle">조선 제4대 임금님</div>
+            </div>
+            
+            <div class="infobox-image-container">
+              <img src="images/sejong_portrait.png" alt="세종대왕 어진" class="infobox-image">
+              <div class="image-caption">백성을 인자하게 내려다보시는 세종대왕님 초상화</div>
+            </div>
+
+            <table class="infobox-table">
+              <tbody>
+                <tr class="infobox-section-title">
+                  <td colspan="2">기본 프로필</td>
+                </tr>
+                <tr>
+                  <th>진짜 이름</th>
+                  <td>이도 (李祹)</td>
+                </tr>
+                <tr>
+                  <th>태어난 날</th>
+                  <td>1397년 5월 15일<br><small>서울 통인동에서 태어났어요</small></td>
+                </tr>
+                <tr>
+                  <th>돌아가신 날</th>
+                  <td>1450년 4월 8일 (향년 52세)</td>
+                </tr>
+                <tr>
+                  <th>묻히신 곳</th>
+                  <td>영릉 (英陵)<br><small>경기도 여주시에 있어요</small></td>
+                </tr>
+                <tr class="infobox-section-title">
+                  <td colspan="2">가족 관계</td>
+                </tr>
+                <tr>
+                  <th>아버지</th>
+                  <td>태종 (조선 3대 임금)</td>
+                </tr>
+                <tr>
+                  <th>어머니</th>
+                  <td>원경왕후 민씨</td>
+                </tr>
+                <tr>
+                  <th>아내</th>
+                  <td>소헌왕후 심씨</td>
+                </tr>
+                <tr>
+                  <th>자녀</th>
+                  <td>문종(첫째 아들), 세조(둘째 아들) 등 자녀가 아주 많았어요</td>
+                </tr>
+                <tr class="infobox-section-title">
+                  <td colspan="2">재위 기간 (임금이었던 시절)</td>
+                </tr>
+                <tr>
+                  <th>임금이 된 날</th>
+                  <td>1418년 9월 9일 (22세)</td>
+                </tr>
+                <tr>
+                  <th>물러난 날</th>
+                  <td>1450년 4월 8일</td>
+                </tr>
+              </tbody>
+            </table>
+          </aside>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Life Section -->
+      <section id="life" class="article-section">
+        <h2 class="section-heading">1. 생애 (살아온 길)</h2>
+        
+        <div id="life-prince" class="subsection">
+          <h3 class="subsection-heading">1.1 책을 사랑한 왕자</h3>
+          <p>
+            세종대왕은 어릴 때부터 지독한 **'책벌레'**였어요. 눈병이 나서 눈이 빨갛게 붓고 아픈 와중에도 책 읽기를 멈추지 않았대요. 걱정이 된 아버지 태종 임금님이 세종의 방에서 책을 모두 빼앗아 숨겨버리자, 병풍 사이에 우연히 남아 있던 책 한 권을 발견하고는 너무 기뻐하며 수백 번이나 반복해서 읽었다고 해요.
+          </p>
+          <p>
+            원래 왕위는 첫째 아들인 양녕대군 형이 이어받기로 되어 있었어요. 하지만 양녕대군은 공부를 멀리하고 엉뚱한 행동을 많이 했어요. 반면에 셋째 아들인 세종(충녕대군)은 학식이 뛰어나고 품격이 있어 신하들과 백성들에게 많은 칭찬을 받았지요. 결국 아버지는 마음을 바꾸어 세종을 왕세자로 삼고 나라를 맡기게 되었답니다.
+          </p>
+        </div>
+
+        <div id="life-accession" class="subsection">
+          <h3 class="subsection-heading">1.2 조선의 왕이 되다</h3>
+          <p>
+            세종대왕은 22살이라는 젊은 나이에 왕위에 올랐어요. 임금이 된 후 가장 먼저 한 일은 **'집현전'**이라는 학문 연구소를 크게 만든 것이었어요. 이곳에 전국의 똑똑하고 재능 있는 젊은 선비들을 모아 공부할 수 있게 돕고, 어떻게 하면 백성들의 고단한 삶을 편하게 해 줄지 함께 밤낮으로 토론하고 연구했답니다.
+          </p>
+        </div>
+
+        <div id="life-death" class="subsection">
+          <h3 class="subsection-heading">1.3 아름다운 안식처</h3>
+          <p>
+            너무 많은 공부와 나라일로 몸을 돌보지 못해 만년에는 당뇨병, 안질(눈병) 등 많은 병을 앓았어요. 눈이 거의 보이지 않는 큰 고통 속에서도 나랏일을 멈추지 않았던 세종대왕은 52세를 일기로 세상을 떠나셨어요.
+          </p>
+          <p>
+            지금은 경기도 여주에 있는 **'영릉(英陵)'**이라는 울창하고 아름다운 숲속 릉에 왕비인 소헌왕후와 함께 다정하게 잠들어 계신답니다.
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Achievements Section (Interactive Showcase) -->
+      <section id="achievements" class="article-section">
+        <h2 class="section-heading">2. 세종대왕의 업적</h2>
+        <p class="section-intro">아래 버튼들을 하나씩 눌러 세종대왕님이 하신 놀라운 일들을 그림과 함께 알아보세요!</p>
+
+        <!-- Dynamic Tabs System -->
+        <div class="interactive-tabs-container">
+          <div class="tabs-list" role="tablist">
+            <button class="tab-btn active" data-tab="hangul" id="toc-ach-hangul" role="tab" aria-selected="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              한글 창제
+            </button>
+            <button class="tab-btn" data-tab="science" id="toc-ach-science" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              과학 기술
+            </button>
+            <button class="tab-btn" data-tab="territory" id="toc-ach-territory" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                <line x1="9" y1="3" x2="9" y2="18"></line>
+                <line x1="15" y1="6" x2="15" y2="21"></line>
+              </svg>
+              영토 확장
+            </button>
+            <button class="tab-btn" data-tab="culture" id="toc-ach-culture" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+              </svg>
+              음악과 제도
+            </button>
+          </div>
+
+          <div class="tab-content-wrapper">
+            <!-- Hangul Tab -->
+            <div class="tab-content active" id="tab-hangul">
+              <div class="tab-grid">
+                <div class="tab-text">
+                  <h4 class="tab-title">훈민정음 (한글) - 백성을 가르치는 바른 소리</h4>
+                  <p class="tab-desc font-serif">
+                    "우리나라 말이 중국과 달라, 글자(한자)로 서로 통하지 않으니, 가여운 백성들이 말하고 싶은 것이 있어도 마음대로 표현하지 못하는구나. 내가 이를 가엾게 여겨 새로 스물여덟 글자를 만드노니, 모든 백성이 쉽게 배워 매일 편하게 쓰길 바란다."
+                  </p>
+                  <p class="tab-desc">
+                    옛날 조선시대에는 우리 글자가 없어서 어려운 중국의 '한자'를 빌려 썼어요. 하지만 한자는 너무 복잡해서 가난하고 배움이 적은 일반 백성들은 배울 수 없었지요. 그래서 억울한 일을 당해도 관청에 편지를 쓸 수 없었어요.
+                  </p>
+                  <p class="tab-desc">
+                    이를 불쌍히 여긴 세종대왕은 입 모양과 소리가 나는 발음 기관을 본떠서 <strong>'훈민정음(한글)'</strong>을 발명했어요. 한글은 배우기가 너무나 쉬워서 머리가 똑똑한 사람은 아침 한나절 만에, 머리가 나쁜 사람도 며칠이면 글을 깨우칠 수 있었답니다!
+                  </p>
+                </div>
+                <div class="tab-media">
+                  <img src="images/hunminjengeum.png" alt="훈민정음 언해본" class="tab-image">
+                  <span class="media-caption">유네스코 세계기록유산으로 등록된 소중한 우리 글자 한글책</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Science Tab -->
+            <div class="tab-content" id="tab-science">
+              <div class="tab-grid">
+                <div class="tab-text">
+                  <h4 class="tab-title">장영실과 함께 만든 신비로운 도구들</h4>
+                  <p class="tab-desc">
+                    농사를 잘 짓기 위해서는 지금이 몇 시인지, 비가 얼마나 내리는지 아는 것이 매우 중요했어요. 세종대왕은 원래 신분이 낮은 노비였던 **장영실**이라는 사람의 천재적인 손재주를 알아보고 신분을 해방해 주고 벼슬을 내려 발명에 집중하도록 도왔어요.
+                  </p>
+                  <p class="tab-desc">
+                    두 사람은 힘을 합쳐 아래와 같은 엄청난 발명품들을 만들어 내었어요:
+                  </p>
+                  <ul class="bullet-list">
+                    <li><strong>자격루 (스스로 치는 물시계):</strong> 물의 힘을 이용해 정해진 시간마다 나무 인형이 스스로 종과 북을 쳐서 소리로 시간을 알려주는 아주 신기한 자동 물시계예요.</li>
+                    <li><strong>앙부일구 (솥 모양 해시계):</strong> 오목한 솥 모양 안에 해 그림자가 비쳐 시간을 보여주었어요. 글을 모르는 백성을 위해 그림으로 시간을 나타냈답니다.</li>
+                    <li><strong>측우기 (비 재는 그릇):</strong> 세계 최초로 하늘에서 내리는 빗물의 양을 똑같은 크기의 그릇으로 정확히 측정하여 가뭄과 홍수를 대비했어요.</li>
+                  </ul>
+                </div>
+                <div class="tab-media" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div>
+                      <img src="images/angbuilgu.png" alt="앙부일구 해시계" class="tab-image" style="aspect-ratio: 1/1; object-fit: cover;">
+                      <span class="media-caption">솥을 닮은 오목한 해시계 앙부일구</span>
+                    </div>
+                    <div>
+                      <img src="images/cheogugi.png" alt="측우기" class="tab-image" style="aspect-ratio: 1/1; object-fit: cover;">
+                      <span class="media-caption">빗물의 양을 재던 철제 그릇 측우기</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Territory Tab -->
+            <div class="tab-content" id="tab-territory">
+              <div class="tab-grid">
+                <div class="tab-text">
+                  <h4 class="tab-title">우리나라 영토를 완성한 영웅들: 4군 6진</h4>
+                  <p class="tab-desc">
+                    세종대왕은 착하기만 한 임금이 아니라, 적들을 무찌를 때는 무시무시할 정도로 단호하고 강인한 임금이었어요. 당시 북쪽 국경지대에서는 '여진족'이라는 적들이 쳐들어와 백성들을 괴롭히고 물건을 빼앗아 갔지요.
+                  </p>
+                  <p class="tab-desc">
+                    세종대왕은 최윤덕 장군을 보내 평안도 쪽에 <strong>4군</strong>을 짓고, 김종서 장군을 보내 함경도 쪽에 <strong>6진</strong>을 쌓았어요. 이로써 백성들을 해치던 적들을 멀리 몰아내고, 지금 우리나라 북쪽 테두리(압록강과 두만강 선)를 완성했답니다!
+                  </p>
+                </div>
+                <div class="tab-media">
+                  <div class="map-placeholder">
+                    <div class="map-header">지도: 북쪽 국경 개척</div>
+                    <div class="map-visual">
+                      <div class="map-river-yalu">압록강 쪽에 4군을 세웠어요! 🛡️</div>
+                      <div class="map-river-tumen">두만강 쪽에 6진을 지켰어요! 🏹</div>
+                    </div>
+                    <div class="map-footer">압록강부터 두만강까지 우리 땅의 안전을 지켰어요</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Culture Tab -->
+            <div class="tab-content" id="tab-culture">
+              <div class="tab-grid">
+                <div class="tab-text">
+                  <h4 class="tab-title">조선의 음악을 조율한 악보: 정간보</h4>
+                  <p class="tab-desc">
+                    옛날 조선시대 왕실 음악은 매우 어지럽고 정리가 안 되어 있었어요. 중국 음악과 섞여 어색했지요. 세종대왕은 음악 천재인 <strong>박연</strong>을 불러 맑고 웅장한 아악(궁중 음악)으로 정리하게 했어요. 
+                  </p>
+                  <p class="tab-desc">
+                    놀랍게도 세종대왕은 직접 음악을 작곡하기도 했어요. 동양 최초로 소리의 높이뿐만 아니라 **박자(소리의 길이)**까지 한눈에 볼 수 있도록 바둑판 모양의 칸으로 된 <strong>'정간보'</strong>라는 대단한 악보를 만들었어요. 이 악보 덕분에 조선의 아름다운 음악이 오늘날까지 그대로 전해질 수 있었답니다.
+                  </p>
+                </div>
+                <div class="tab-media">
+                  <div class="music-card">
+                    <div class="music-note">🎵</div>
+                    <h5>정간보 (井間譜)</h5>
+                    <p>우물 정(井) 자 모양의 네모 칸에 음표와 박자를 동시에 적은 세계적인 발명품 악보예요!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Family Section -->
+      <section id="family" class="article-section">
+        <h2 class="section-heading">3. 가족 관계도</h2>
+        <p>세종대왕은 아버지 태종과 어머니 원경왕후의 셋째 아들이에요. 훌륭한 아내 소헌왕후와의 사이에서 예쁜 자녀들을 많이 낳았답니다.</p>
+        
+        <div class="family-tree-container">
+          <div class="tree-node parent-node">
+            <span class="title">아버지</span>
+            <span class="name">태종 (이방원)</span>
+          </div>
+          <div class="tree-node parent-node">
+            <span class="title">어머니</span>
+            <span class="name">원경왕후 민씨</span>
+          </div>
+          
+          <div class="tree-line"></div>
+          
+          <div class="tree-node main-node">
+            <span class="title">주인공</span>
+            <span class="name">세종대왕 (이도)</span>
+          </div>
+          <div class="tree-node spouse-node">
+            <span class="title">아내(왕비)</span>
+            <span class="name">소헌왕후 심씨</span>
+          </div>
+
+          <div class="tree-line"></div>
+
+          <div class="children-container">
+            <div class="tree-node child-node">
+              <span class="title">첫째 아들 (5대 왕)</span>
+              <span class="name">문종 (이향)</span>
+            </div>
+            <div class="tree-node child-node">
+              <span class="title">둘째 아들 (7대 왕)</span>
+              <span class="name">세조 (이유)</span>
+            </div>
+            <div class="tree-node child-node">
+              <span class="title">셋째 아들 (예술가)</span>
+              <span class="name">안평대군 (이용)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- Legacy Section -->
+      <section id="legacy" class="article-section">
+        <h2 class="section-heading">4. 따뜻한 애민 사상 (백성을 사랑하는 마음)</h2>
+        <div class="evaluation-container">
+          <div class="eval-card">
+            <h4>어린이와 약자를 보살핀 임금님</h4>
+            <p>
+              세종대왕은 몸이 아프고 힘든 사람들을 가장 소중히 여겼어요. 관청에서 부리던 노비들이 아이를 낳으면 옛날에는 하루도 쉬지 못하고 일해야 했는데, 세종대왕은 **'엄마 노비에게는 100일, 아빠 노비에게도 30일'**의 유급 출산 휴가를 주도록 법을 만들었어요. 600년 전에 이런 복지 제도를 만들었다니 정말 대단하지요?
+            </p>
+          </div>
+          <div class="eval-card">
+            <h4>백성에게 의견을 묻는 투표</h4>
+            <p>
+              나라에 세금을 매기는 법을 바꿀 때, 세종대왕은 백성들이 억울하지 않도록 직접 의견을 묻고 싶어 했어요. 그래서 관리를 전국으로 보내 농민들부터 높은 선비들까지 무려 **17만 명의 백성에게 찬반 투표**를 실시했답니다. 국민의 소리를 귀담아듣는 민주주의의 시작이었던 셈이에요.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Quote Engine -->
+        <div class="quote-engine">
+          <h4 class="engine-title font-serif">세종대왕님이 하신 말씀 (어록 카드)</h4>
+          <div class="quote-card-display">
+            <p class="quote-text" id="quoteText">"백성은 나라의 뿌리이니, 뿌리가 튼튼해야 나라가 편안해진다."</p>
+            <p class="quote-source" id="quoteSource">— 세종실록</p>
+          </div>
+          <button id="nextQuoteBtn" class="action-btn">다음 어록 보기</button>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- References Section -->
+      <section id="references" class="article-section">
+        <h2 class="section-heading">5. 도움받은 자료들</h2>
+        <ol class="references-list">
+          <li id="ref-1">조선왕조실록, 세종대왕의 매일의 이야기가 적힌 실록 책.</li>
+          <li id="ref-2">훈민정음 해례본 - 유네스코가 지정한 세계기록유산 한글 해설서.</li>
+          <li id="ref-3">이이화의 역사 동화 이야기들.</li>
+          <li id="ref-4">장영실에 대한 역사 박물관의 어린이용 전기 자료들.</li>
+        </ol>
+      </section>
+
+      <!-- Category Tags -->
+      <div class="category-container">
+        <span class="category-label">문서 분류:</span>
+        <a href="#" class="category-tag">조선 임금님</a>
+        <a href="#" class="category-tag">한글을 만든 사람</a>
+        <a href="#" class="category-tag">우리의 성군</a>
+        <a href="#" class="category-tag">위대한 발명가</a>
+      </div>
+      
+    </main>
+
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>© 2026 SejongWiki. 어린이들이 쉽게 배울 수 있도록 리디자인된 역사 전기관입니다.</p>
+      <p>제작: Antigravity AI Pair Programming • 날씨 및 계절에 따른 테마 변화 기능을 사용해 보세요.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
