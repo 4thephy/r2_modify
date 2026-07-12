@@ -647,6 +647,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 4. 도전! 역사 골든벨 게임 엔진 (Golden Bell Game Engine)
   // ==========================================
+  // ==========================================
+  // 4. 도전! 역사 골든벨 게임 엔진 (Golden Bell Game Engine)
+  // ==========================================
   const playGoldenBellBtn = document.getElementById('playGoldenBellBtn');
   const goldenBellGameView = document.getElementById('goldenBellGameView');
   const gbBackToHomeBtn = document.getElementById('gbBackToHomeBtn');
@@ -669,6 +672,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const gbRetryBtn = document.getElementById('gbRetryBtn');
   const gbResultHomeBtn = document.getElementById('gbResultHomeBtn');
 
+  // New Upgrade Inputs
+  const gbRegRegion = document.getElementById('gbRegRegion');
+  const gbRegSchool = document.getElementById('gbRegSchool');
+  const gbRegGrade = document.getElementById('gbRegGrade');
+  const gbRegName = document.getElementById('gbRegName');
+  const gbLeaderboardStartBody = document.getElementById('gbLeaderboardStartBody');
+  const gbLeaderboardResultBody = document.getElementById('gbLeaderboardResultBody');
+  const gbRevivalOverlay = document.getElementById('gbRevivalOverlay');
+  const gbRevivalQuestionHint = document.getElementById('gbRevivalQuestionHint');
+  const gbRevivalOptionsGrid = document.getElementById('gbRevivalOptionsGrid');
+
   // Game state
   let gbRound = 1;
   let gbLives = 3;
@@ -676,6 +690,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let gbTimerInterval = null;
   let gbCurrentTarget = null;
   let gbQuizPool = [];
+  let gbRevivalUsed = false;
+  let gbStudentInfo = { region: '', school: '', grade: '', name: '' };
 
   function showGoldenBellPortal() {
     // Hide other views
@@ -693,14 +709,28 @@ document.addEventListener('DOMContentLoaded', () => {
     gbPlayScreen.classList.add('hidden');
     gbResultScreen.classList.add('hidden');
     gbFeedbackOverlay.classList.add('hidden');
+    gbRevivalOverlay.classList.add('hidden');
 
     if (gbTimerInterval) clearInterval(gbTimerInterval);
+    loadLeaderboards();
   }
 
   function startGoldenBellGame() {
+    const region = gbRegRegion.value;
+    const school = gbRegSchool.value.trim();
+    const grade = gbRegGrade.value;
+    const name = gbRegName.value.trim();
+
+    if (!region || !school || !grade || !name) {
+      alert("모든 도전자 정보(지역, 학교명, 학년, 이름)를 바르게 입력해 주세요!");
+      return;
+    }
+
+    gbStudentInfo = { region, school, grade, name };
     gbRound = 1;
     gbLives = 3;
     gbQuizPool = [...figuresData];
+    gbRevivalUsed = false;
 
     gbStartScreen.classList.add('hidden');
     gbResultScreen.classList.add('hidden');
@@ -711,25 +741,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loadGbQuestion() {
     if (gbLives <= 0) {
+      // Check if revival is possible at round 6 or 10
+      if ((gbRound === 6 || gbRound === 10) && !gbRevivalUsed) {
+        triggerGbRevival();
+        return;
+      }
       endGbGame(false);
       return;
     }
-    if (gbRound > 5) {
+    if (gbRound > 10) {
       endGbGame(true);
       return;
     }
 
     // Update Round & Lives UI
-    gbRoundIndicator.textContent = `ROUND ${gbRound} / 5`;
+    gbRoundIndicator.textContent = `ROUND ${gbRound} / 10`;
     gbHeartsContainer.innerHTML = '💖'.repeat(gbLives) + '🖤'.repeat(3 - gbLives);
 
     // Pick target figure randomly
     const randomIndex = Math.floor(Math.random() * gbQuizPool.length);
     gbCurrentTarget = gbQuizPool.splice(randomIndex, 1)[0];
 
-    // Pick a hint (one-liner or achievements)
-    const hints = [gbCurrentTarget.oneLiner, ...gbCurrentTarget.achievements];
-    const chosenHint = hints[Math.floor(Math.random() * hints.length)];
+    // Progressive Hint Difficulty Scaling
+    let chosenHint = "";
+    if (gbRound <= 3) {
+      // Easy: one-liner clue
+      chosenHint = gbCurrentTarget.oneLiner;
+    } else if (gbRound <= 7) {
+      // Medium: pick a random achievement
+      const achs = gbCurrentTarget.achievements;
+      chosenHint = achs[Math.floor(Math.random() * achs.length)];
+    } else {
+      // Hard: pick a random full sentence from their detailedStory or anecdote
+      const cleanStory = gbCurrentTarget.detailedStory.replace(/\*\*/g, '');
+      const sentences = cleanStory.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 12);
+      chosenHint = sentences.length > 0 ? sentences[Math.floor(Math.random() * sentences.length)] + "." : gbCurrentTarget.oneLiner;
+    }
+    
     gbQuestionHint.textContent = `"${chosenHint}"`;
 
     // Generate 4 options (1 correct, 3 distractors)
@@ -811,13 +859,77 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       gbFeedbackOverlay.classList.add('hidden');
       
+      // If we ran out of lives, check for revival triggers
       if (gbLives <= 0) {
-        endGbGame(false);
+        if ((gbRound === 6 || gbRound === 10) && !gbRevivalUsed) {
+          triggerGbRevival();
+        } else {
+          endGbGame(false);
+        }
       } else {
         if (isCorrect) {
           gbRound++;
         }
         loadGbQuestion();
+      }
+    }, 2000);
+  }
+
+  function triggerGbRevival() {
+    gbRevivalOverlay.classList.remove('hidden');
+
+    // Pick a revival target that has works
+    const eligibleFigures = figuresData.filter(f => f.works && f.works.length > 0);
+    const revivalTarget = eligibleFigures[Math.floor(Math.random() * eligibleFigures.length)];
+    const bonusWork = revivalTarget.works[0];
+
+    gbRevivalQuestionHint.textContent = `이 인물이 역사에 남긴 소중한 발자취(유산/작품) 중 하나는 바로 '${bonusWork.title}' (${bonusWork.desc.substring(0, 45)}...) 입니다. 이 위인은 누구일까요?`;
+
+    // Options
+    const options = [revivalTarget.name];
+    while (options.length < 4) {
+      const distractor = figuresData[Math.floor(Math.random() * figuresData.length)].name;
+      if (!options.includes(distractor)) {
+        options.push(distractor);
+      }
+    }
+    options.sort(() => Math.random() - 0.5);
+
+    gbRevivalOptionsGrid.innerHTML = '';
+    options.forEach((opt, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'gb-option-btn';
+      btn.innerHTML = `<span class="gb-option-num">${index + 1}</span> ${opt}`;
+      btn.addEventListener('click', () => handleGbRevivalAnswer(opt, revivalTarget.name));
+      gbRevivalOptionsGrid.appendChild(btn);
+    });
+  }
+
+  function handleGbRevivalAnswer(selectedOpt, correctName) {
+    // Disable all revival buttons
+    const btns = gbRevivalOptionsGrid.querySelectorAll('.gb-option-btn');
+    btns.forEach(btn => btn.disabled = true);
+
+    const isCorrect = (selectedOpt === correctName);
+    gbFeedbackOverlay.classList.remove('hidden');
+
+    if (isCorrect) {
+      gbLives = 1;
+      gbRevivalUsed = true;
+      gbFeedbackText.innerHTML = `부활 성공! 🎉<br><small style="font-size: 1.1rem; font-weight: normal; color: #c2f0c2;">하트 1개(💖)를 충전하여 도전을 계속합니다!</small>`;
+    } else {
+      gbFeedbackText.innerHTML = `부활 실패! 😢<br><small style="font-size: 1.1rem; font-weight: normal; color: #ffcccc;">정답은 '${correctName}'입니다. 아쉽게도 탈락했습니다.</small>`;
+    }
+
+    setTimeout(() => {
+      gbFeedbackOverlay.classList.add('hidden');
+      gbRevivalOverlay.classList.add('hidden');
+
+      if (isCorrect) {
+        gbRound++;
+        loadGbQuestion();
+      } else {
+        endGbGame(false);
       }
     }, 2000);
   }
@@ -828,17 +940,79 @@ document.addEventListener('DOMContentLoaded', () => {
     gbPlayScreen.classList.add('hidden');
     gbResultScreen.classList.remove('hidden');
 
+    const roundsCleared = isVictory ? 10 : Math.max(0, gbRound - 1);
+
     if (isVictory) {
       gbResultIcon.textContent = '🏆';
       gbResultTitle.textContent = '골든벨을 울렸습니다! 🔔';
-      gbResultDesc.textContent = '축하합니다! 5문제를 모두 맞히며 찬란한 역사 골든벨의 마스터가 되었습니다!';
+      gbResultDesc.textContent = `축하합니다! ${gbStudentInfo.name} 어린이는 10문제를 모두 맞히며 찬란한 역사 골든벨의 마스터가 되었습니다!`;
       gbRewardBox.classList.remove('hidden');
     } else {
       gbResultIcon.textContent = '😢';
       gbResultTitle.textContent = '아쉽게 탈락했습니다!';
-      gbResultDesc.textContent = '하트를 모두 잃었습니다. 위인전기 탭을 조금 더 탐독한 후에 다시 도전해 보세요!';
+      gbResultDesc.textContent = `아쉽게도 하트를 모두 잃었습니다. ${gbStudentInfo.name} 어린이, 위인 이야기들을 조금 더 탐색해보고 다시 도전해 봐요!`;
       gbRewardBox.classList.add('hidden');
     }
+
+    saveScoreToLeaderboard(roundsCleared);
+  }
+
+  function saveScoreToLeaderboard(roundsCleared) {
+    const score = (roundsCleared * 100) + (gbLives * 50);
+
+    const newEntry = {
+      region: gbStudentInfo.region,
+      school: gbStudentInfo.school,
+      grade: gbStudentInfo.grade,
+      name: gbStudentInfo.name,
+      round: roundsCleared === 10 ? "골든벨 울림! 🔔" : `${roundsCleared}단계`,
+      score: score,
+      timestamp: new Date().toLocaleDateString('ko-KR')
+    };
+
+    const rankings = JSON.parse(localStorage.getItem('gbRankings') || '[]');
+    rankings.push(newEntry);
+    rankings.sort((a, b) => b.score - a.score);
+    const top10 = rankings.slice(0, 10);
+    localStorage.setItem('gbRankings', JSON.stringify(top10));
+
+    renderLeaderboardUI(top10);
+  }
+
+  function loadLeaderboards() {
+    const rankings = JSON.parse(localStorage.getItem('gbRankings') || '[]');
+    renderLeaderboardUI(rankings);
+  }
+
+  function renderLeaderboardUI(rankings) {
+    let html = '';
+    rankings.forEach((item, index) => {
+      let badgeClass = 'rank-other';
+      if (index === 0) badgeClass = 'rank-1';
+      else if (index === 1) badgeClass = 'rank-2';
+      else if (index === 2) badgeClass = 'rank-3';
+      
+      const badgeIcon = index < 3 ? ['🥇', '🥈', '🥉'][index] : index + 1;
+
+      html += `
+        <tr>
+          <td><span class="rank-badge ${badgeClass}">${badgeIcon}</span></td>
+          <td>
+            <div style="font-weight: 700; color: var(--text-primary);">${item.name} (${item.grade})</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">${item.region} ${item.school}</div>
+          </td>
+          <td><strong>${item.round}</strong></td>
+          <td style="color: #e2b857; font-weight: 700;">${item.score}점</td>
+        </tr>
+      `;
+    });
+
+    if (rankings.length === 0) {
+      html = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 2rem;">아직 등록된 랭킹이 없습니다. 첫 번째 골든벨의 주인이 되어 보세요!</td></tr>`;
+    }
+
+    gbLeaderboardStartBody.innerHTML = html;
+    gbLeaderboardResultBody.innerHTML = html;
   }
 
   // Bind clicks
